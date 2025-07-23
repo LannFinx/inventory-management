@@ -30,7 +30,7 @@
         </ul>
 
         <div class="flex gap-6 mt-10 text-sm">
-            <a href="{{ route('supplies.index') }}" class="text-blue-400 hover:underline">📂 Kategori</a>
+            <a href="{{ route('suppliers.index') }}" class="text-blue-400 hover:underline">📂 Kategori</a>
             <a href="{{ route('barangs.index') }}" class="text-blue-400 hover:underline">📦 Barang</a>
         </div>
     </div>
