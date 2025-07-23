@@ -65,7 +65,7 @@ class BarangController extends Controller
             'stok' => 'required|integer|min:0',
             'kategori_id' => 'required|exists:kategoris,id',
             'supplier_id' => 'required|array|min:1',
-            'supplier_id.*' => 'exists:suppliers,id',
+            'supplier_id.*' => 'nullable|exists:suppliers,id',
             'harga_beli' => 'required|array',
         ]);
 
