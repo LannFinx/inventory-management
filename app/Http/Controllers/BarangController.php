@@ -6,14 +6,35 @@ use App\Models\Barang;
 use App\Models\Kategori;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf; // Pastikan ini ada di atas controller Anda
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BarangExport;
+
 
 class BarangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $barangs = Barang::with(['kategori', 'suppliers'])->get();
-        return view('barangs.index', compact('barangs'));
+        $query = Barang::with(['kategori', 'suppliers']);
+
+        if ($request->filled('keyword')) {
+            $query->where('nama_barang', 'like', '%' . $request->keyword . '%');
+        }
+
+        if ($request->filled('kategori_id')) {
+            $query->where('kategori_id', $request->kategori_id);
+        }
+
+        if ($request->filled('from') && $request->filled('to')) {
+            $query->whereBetween('created_at', [$request->from, $request->to]);
+        }
+
+        $barangs = $query->get();
+        $kategoris = Kategori::all();
+
+        return view('barangs.index', compact('barangs', 'kategoris'));
     }
+
 
     public function create()
     {
@@ -113,5 +134,42 @@ class BarangController extends Controller
         $barang = Barang::onlyTrashed()->where('id', $id)->firstOrFail();
         $barang->forceDelete();
         return redirect()->route('barangs.trashed')->with('success', 'Barang dihapus permanen');
+    }
+
+
+
+    public function exportPdf(Request $request)
+    {
+        $barangs = $this->getFilteredBarangs($request);
+
+        // Gunakan alias yang benar
+        $pdf = FacadePdf::loadView('barangs.export_pdf', compact('barangs'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-barang.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new BarangExport($request), 'laporan-barang.xlsx');
+    }
+
+    private function getFilteredBarangs(Request $request)
+    {
+        $query = Barang::with(['kategori', 'suppliers']);
+
+        if ($request->filled('keyword')) {
+            $query->where('nama_barang', 'like', '%' . $request->keyword . '%');
+        }
+
+        if ($request->filled('kategori_id')) {
+            $query->where('kategori_id', $request->kategori_id);
+        }
+
+        if ($request->filled('from') && $request->filled('to')) {
+            $query->whereBetween('created_at', [$request->from, $request->to]);
+        }
+
+        return $query->get();
     }
 }

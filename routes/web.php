@@ -53,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/barangs/trashed', [BarangController::class, 'trashed'])->name('barangs.trashed');
     Route::put('/barangs/{id}/restore', [BarangController::class, 'restore'])->name('barangs.restore');
     Route::delete('/barangs/{id}/force', [BarangController::class, 'forceDelete'])->name('barangs.forceDelete');
+
+    Route::get('barangs/export/pdf', [BarangController::class, 'exportPdf'])->name('barangs.export.pdf');
+    Route::get('barangs/export/excel', [BarangController::class, 'exportExcel'])->name('barangs.export.excel');
 });
 
 
