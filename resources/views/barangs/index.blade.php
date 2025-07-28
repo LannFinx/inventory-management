@@ -95,7 +95,8 @@
                                     <div>- Rp{{ number_format($supplier->pivot->harga_beli, 0, ',', '.') }}</div>
                                 @endforeach
                             </td>
-                            <td class="px-6 py-4">{{ $barang->created_at->format('d-m-Y') }}</td>
+                            <td class="px-6 py-4">{{ $barang->created_at->translatedFormat('d F Y') }}</td>
+
                             <td class="px-6 py-4 space-x-2">
                                 <a href="{{ route('barangs.edit', $barang->id) }}"
                                     class="text-green-400 hover:underline">Edit</a>

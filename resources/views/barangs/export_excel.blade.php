@@ -6,7 +6,7 @@
             <th>Kategori</th>
             <th>Supplier</th>
             <th>Harga Beli</th>
-            <th>Tanggal Ditambahkan</th> 
+            <th>Tanggal Ditambahkan</th>
         </tr>
     </thead>
     <tbody>
@@ -16,16 +16,16 @@
                 <td>{{ $barang->stok }}</td>
                 <td>{{ $barang->kategori->nama_kategori ?? '-' }}</td>
                 <td>
-                    @foreach ($barang->suppliers as $s)
-                        {{ $s->nama_supplier }}<br>
-                    @endforeach
+                    {{ $barang->suppliers->pluck('nama_supplier')->implode(', ') }}
                 </td>
                 <td>
-                    @foreach ($barang->suppliers as $s)
-                        Rp{{ number_format($s->pivot->harga_beli, 0, ',', '.') }}<br>
-                    @endforeach
+                    @php
+                        echo 'Rp' . implode(', ', $barang->suppliers->map(function($s) {
+                            return number_format($s->pivot->harga_beli, 0, ',', '.');
+                        })->toArray());
+                    @endphp
                 </td>
-                <td>{{ \Carbon\Carbon::parse($barang->created_at)->format('Y-m-d') }}</td> {{-- nilai --}}
+                <td>{{ \Carbon\Carbon::parse($barang->created_at)->translatedFormat('d F Y') }}</td>
             </tr>
         @endforeach
     </tbody>
