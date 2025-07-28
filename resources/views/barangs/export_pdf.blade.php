@@ -1,48 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
+    <meta charset="UTF-8">
     <title>Laporan Barang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 12px;
             background-color: #ffffff;
             color: #333;
+            margin: 40px;
         }
 
         h2 {
             text-align: center;
-            color: #c0392b;
-            /* merah tua */
+            color: #d63031;
             text-transform: uppercase;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 1px #ddd;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+            border-collapse: separate;
+            border-spacing: 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         th {
-            background-color: #e74c3c;
-            /* merah */
+            background-color: #d63031;
             color: #fff;
-            padding: 10px;
-            border: 1px solid #e0e0e0;
+            padding: 12px;
             text-align: center;
+            font-weight: 600;
+            border-top: 1px solid #ccc;
+            border-bottom: 2px solid #c0392b;
         }
 
         td {
-            border: 1px solid #e0e0e0;
-            padding: 8px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 10px;
             vertical-align: top;
         }
 
-        tr:nth-child(even) {
-            background-color: #fdf5f5;
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        td, th {
+            border-left: 1px solid #eee;
+        }
+
+        td:first-child, th:first-child {
+            border-left: none;
+        }
+
+        tr:last-child td {
+            border-bottom: 2px solid #dcdcdc;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+            }
+
+            table {
+                box-shadow: none;
+            }
         }
     </style>
 </head>

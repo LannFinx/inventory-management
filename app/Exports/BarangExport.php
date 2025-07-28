@@ -67,34 +67,48 @@ class BarangExport implements FromView, WithEvents, WithColumnFormatting, WithCo
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
-                // Header Tabel
-                $sheet->getStyle('A1:F1')->applyFromArray([
+                // Judul Laporan
+                $sheet->mergeCells('A1:F1');
+                $sheet->setCellValue('A1', 'LAPORAN DATA BARANG');
+                $sheet->getDefaultRowDimension()->setRowHeight(-1); // auto height
+                $sheet->getStyle('A1')->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14, 'color' => ['rgb' => 'FFFFFF']],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
+
+                // Header Kolom (Baris ke-2)
+                $sheet->getStyle('A2:F2')->applyFromArray([
                     'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FF4D4D']],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FF5733']],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                // Data
+                // Data Table (mulai dari baris ke-3)
                 $highestRow = $sheet->getHighestRow();
                 $highestCol = $sheet->getHighestColumn();
 
-                $sheet->getStyle("A2:{$highestCol}{$highestRow}")->applyFromArray([
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                $sheet->getStyle("A3:{$highestCol}{$highestRow}")->applyFromArray([
+                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'font' => ['size' => 11, 'color' => ['rgb' => '000000']],
+                    'font' => ['size' => 11],
                 ]);
 
-                // Tanggal Cetak di bawah
-                $lastRow = $sheet->getHighestRow() + 2;
-                $sheet->mergeCells("A{$lastRow}:F{$lastRow}");
-                $sheet->setCellValue("A{$lastRow}", 'Tanggal Cetak: ' . now()->format('d-m-Y'));
-                $sheet->getStyle("A{$lastRow}")->applyFromArray([
-                    'font' => ['italic' => true, 'size' => 11, 'color' => ['rgb' => '000000']],
+                // Wrap text untuk kolom Supplier & Harga Beli (kolom D dan E)
+                foreach (range(3, $highestRow) as $row) {
+                    $sheet->getStyle("D{$row}:E{$row}")->getAlignment()->setWrapText(true);
+                }
+
+                // Tanggal Cetak
+                $footerRow = $highestRow + 2;
+                $sheet->mergeCells("A{$footerRow}:F{$footerRow}");
+                $sheet->setCellValue("A{$footerRow}", 'Tanggal Cetak: ' . now()->translatedFormat('d F Y'));
+                $sheet->getStyle("A{$footerRow}")->applyFromArray([
+                    'font' => ['italic' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
                 ]);
 
-                // Auto-size kolom A-F
+                // Auto-size kolom A sampai F
                 foreach (range('A', 'F') as $col) {
                     $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
