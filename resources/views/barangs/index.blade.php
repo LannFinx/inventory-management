@@ -70,6 +70,7 @@
                 <thead class="bg-gray-700 text-gray-300 text-sm uppercase">
                     <tr>
                         <th class="px-6 py-3 text-left">Nama</th>
+                        <th class="px-6 py-3 text-left">Gambar</th>
                         <th class="px-6 py-3 text-left">Stok</th>
                         <th class="px-6 py-3 text-left">Kategori</th>
                         <th class="px-6 py-3 text-left">Supplier</th>
@@ -83,6 +84,15 @@
                     @foreach ($barangs as $barang)
                         <tr class="hover:bg-gray-700 transition">
                             <td class="px-6 py-4">{{ $barang->nama_barang }}</td>
+                            <td class="px-6 py-4">
+                                @if ($barang->gambar)
+                                    <img src="{{ asset('storage/' . $barang->gambar) }}" alt="Gambar"
+                                        class="w-16 h-16 object-cover rounded">
+                                @else
+                                    <span class="text-sm italic text-gray-400">Tidak ada</span>
+                                @endif
+                            </td>
+
                             <td class="px-6 py-4">{{ $barang->stok }}</td>
                             <td class="px-6 py-4">{{ $barang->kategori->nama_kategori ?? 'Tidak ada' }}</td>
                             <td class="px-6 py-4">
@@ -95,8 +105,9 @@
                                     <div>- Rp{{ number_format($supplier->pivot->harga_beli, 0, ',', '.') }}</div>
                                 @endforeach
                             </td>
-                            <td class="px-6 py-4">{{ $barang->created_at->translatedFormat('d F Y') }}</td>
-
+                            <td class="px-6 py-4">
+                                {{ $barang->created_at ? $barang->created_at->translatedFormat('d F Y') : '-' }}
+                            </td>
                             <td class="px-6 py-4 space-x-2">
                                 <a href="{{ route('barangs.edit', $barang->id) }}"
                                     class="text-green-400 hover:underline">Edit</a>

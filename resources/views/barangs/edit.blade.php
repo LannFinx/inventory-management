@@ -22,7 +22,7 @@
         @endif
 
         <form action="{{ url('/barangs/update/' . $barang->id) }}" method="POST"
-            class="space-y-4 bg-gray-800 p-6 rounded shadow">
+            class="space-y-4 bg-gray-800 p-6 rounded shadow" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -31,6 +31,21 @@
                 <input type="text" name="nama_barang" value="{{ $barang->nama_barang }}" required
                     class="w-full bg-gray-700 text-white px-4 py-2 rounded">
             </div>
+            
+            <div>
+                <label class="block mb-1">Gambar Barang:</label>
+
+                @if ($barang->gambar)
+                    <div class="mb-2">
+                        <img src="{{ asset('storage/' . $barang->gambar) }}" alt="Gambar Barang" class="h-32 rounded">
+                    </div>
+                @endif
+
+                <input type="file" name="gambar" accept="image/*"
+                    class="w-full bg-gray-700 text-white px-4 py-2 rounded">
+                <p class="text-sm text-gray-400 mt-1">Biarkan kosong jika tidak ingin mengubah gambar.</p>
+            </div>
+
 
             <div>
                 <label class="block mb-1">Stok:</label>

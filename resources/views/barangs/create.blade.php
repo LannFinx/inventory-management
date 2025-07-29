@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        <form action="{{ url('/barangs/store') }}" method="POST" class="space-y-4 bg-gray-800 p-6 rounded shadow">
+        <form action="{{ url('/barangs/store') }}" method="POST" class="space-y-4 bg-gray-800 p-6 rounded shadow" enctype="multipart/form-data">
             @csrf
 
             <div>
@@ -29,6 +29,13 @@
                 <input type="text" name="nama_barang" required
                     class="w-full bg-gray-700 text-white px-4 py-2 rounded">
             </div>
+
+            <div>
+                <label class="block mb-1">Gambar Barang:</label>
+                <input type="file" name="gambar" accept="image/*"
+                    class="w-full bg-gray-700 text-white px-4 py-2 rounded">
+            </div>
+
 
             <div>
                 <label class="block mb-1">Stok:</label>

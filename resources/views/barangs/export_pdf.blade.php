@@ -9,57 +9,73 @@
         body {
             font-family: 'Poppins', sans-serif;
             font-size: 12px;
-            background-color: #ffffff;
-            color: #333;
-            margin: 40px;
+            color: #2c2c2c;
+            background-color: #fff;
+            margin: 30px;
         }
 
         h2 {
             text-align: center;
-            color: #d63031;
+            color: #e74c3c;
+            font-size: 22px;
             text-transform: uppercase;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            font-weight: 700;
             letter-spacing: 1px;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-collapse: collapse;
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
-        th {
-            background-color: #d63031;
-            color: #fff;
-            padding: 12px;
-            text-align: center;
-            font-weight: 600;
-            border-top: 1px solid #ccc;
-            border-bottom: 2px solid #c0392b;
-        }
-
-        td {
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
-            padding: 10px;
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
             vertical-align: top;
         }
 
-        tr:nth-child(even) td {
-            background-color: #f9f9f9;
+        thead {
+            background-color: #e74c3c;
+            color: #fff;
         }
 
-        td, th {
-            border-left: 1px solid #eee;
+        th {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        td:first-child, th:first-child {
-            border-left: none;
+        tbody tr:nth-child(even) {
+            background-color: #fff6f5;
         }
 
-        tr:last-child td {
-            border-bottom: 2px solid #dcdcdc;
+        tbody tr:nth-child(odd) {
+            background-color: #ffeceb;
+        }
+
+        td img {
+            width: 60px;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 2px 6px rgba(231, 76, 60, 0.2);
+        }
+
+        .text-muted {
+            color: #7f8c8d;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .supplier, .harga {
+            font-size: 11px;
+            line-height: 1.4;
         }
 
         @media print {
@@ -80,31 +96,39 @@
     <table>
         <thead>
             <tr>
-                <th>Nama Barang</th>
+                <th>Nama</th>
+                <th>Gambar</th>
                 <th>Stok</th>
                 <th>Kategori</th>
                 <th>Supplier</th>
                 <th>Harga Beli</th>
-                <th>Tanggal Ditambahkan</th>
+                <th>Ditambahkan</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($barangs as $barang)
                 <tr>
                     <td>{{ $barang->nama_barang }}</td>
+                    <td>
+                        @if ($barang->gambar && file_exists(public_path('storage/' . $barang->gambar)))
+                            <img src="{{ public_path('storage/' . $barang->gambar) }}">
+                        @else
+                            <div class="text-muted">No Image</div>
+                        @endif
+                    </td>
                     <td>{{ $barang->stok }}</td>
                     <td>{{ $barang->kategori->nama_kategori ?? '-' }}</td>
-                    <td>
+                    <td class="supplier">
                         @foreach ($barang->suppliers as $s)
-                            {{ $s->nama_supplier }}<br>
+                            • {{ $s->nama_supplier }}<br>
                         @endforeach
                     </td>
-                    <td>
+                    <td class="harga">
                         @foreach ($barang->suppliers as $s)
                             Rp{{ number_format($s->pivot->harga_beli, 0, ',', '.') }}<br>
                         @endforeach
                     </td>
-                    <td>{{ \Carbon\Carbon::parse($barang->created_at)->translatedFormat('d F Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($barang->created_at)->translatedFormat('d M Y') }}</td>
                 </tr>
             @endforeach
         </tbody>

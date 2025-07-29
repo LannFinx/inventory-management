@@ -8,6 +8,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf; // Pastikan ini ada di atas controller Anda
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 use App\Exports\BarangExport;
 
 
@@ -47,6 +48,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'nama_barang' => 'required|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'stok' => 'required|integer|min:0',
             'kategori_id' => 'required|exists:kategoris,id',
             'supplier_id' => 'required|array|min:1',
@@ -54,11 +56,20 @@ class BarangController extends Controller
             'harga_beli' => 'required|array',
         ]);
 
+        if ($request->hasFile('gambar')) {
+            $gambar = $request->file('gambar');
+            $gambarPath = $gambar->store('gambar-barang', 'public');
+        } else {
+            $gambarPath = null;
+        }
+
         $barang = Barang::create([
             'nama_barang' => $request->nama_barang,
             'stok' => $request->stok,
             'kategori_id' => $request->kategori_id,
+            'gambar' => $gambarPath,
         ]);
+
 
         foreach ($request->supplier_id as $index => $supplierId) {
             $barang->suppliers()->attach($supplierId, [
@@ -85,6 +96,7 @@ class BarangController extends Controller
             'nama_barang' => 'required|string|max:255',
             'stok' => 'required|integer|min:0',
             'kategori_id' => 'required|exists:kategoris,id',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'supplier_id' => 'required|array|min:1',
             'supplier_id.*' => 'nullable|exists:suppliers,id',
             'harga_beli' => 'required|array',
@@ -92,17 +104,32 @@ class BarangController extends Controller
 
         $barang = Barang::where('id', $id)->firstOrFail();
 
-        $barang->update([
-            'nama_barang' => $request->nama_barang,
-            'stok' => $request->stok,
-            'kategori_id' => $request->kategori_id,
-        ]);
+        // Cek apakah user meng-upload gambar baru
+        if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
+            if ($barang->gambar && Storage::disk('public')->exists($barang->gambar)) {
+                Storage::disk('public')->delete($barang->gambar);
+            }
 
+
+            // Simpan gambar baru
+            $gambar = $request->file('gambar');
+            $gambarPath = $gambar->store('gambar-barang', 'public');
+
+            $barang->gambar = $gambarPath;
+        }
+
+        // Update data lainnya
+        $barang->nama_barang = $request->nama_barang;
+        $barang->stok = $request->stok;
+        $barang->kategori_id = $request->kategori_id;
+        $barang->save();
+
+        // Update pivot supplier
         $syncData = [];
         foreach ($request->supplier_id as $index => $supplierId) {
             $syncData[$supplierId] = ['harga_beli' => $request->harga_beli[$index] ?? 0];
         }
-
         $barang->suppliers()->sync($syncData);
 
         return redirect()->route('barangs.index')->with('success', 'Barang berhasil diperbarui');

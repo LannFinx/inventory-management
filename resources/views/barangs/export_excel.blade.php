@@ -1,7 +1,9 @@
+
 <table>
     <thead>
         <tr>
-            <th colspan="6" style="background-color:#c0392b; color:#fff; padding:12px; font-size:16px; text-transform:uppercase; letter-spacing:1px;">
+            <th colspan="6"
+                style="background-color:#c0392b; color:#fff; padding:12px; font-size:16px; text-transform:uppercase; letter-spacing:1px;">
                 Judul Laporan Barang
             </th>
         </tr>
@@ -32,7 +34,8 @@
                     <td>Rp{{ number_format($supplier->pivot->harga_beli, 0, ',', '.') }}</td>
 
                     @if ($index === 0)
-                        <td rowspan="{{ $rowspan }}">{{ \Carbon\Carbon::parse($barang->created_at)->translatedFormat('d F Y') }}</td>
+                        <td rowspan="{{ $rowspan }}">
+                            {{ \Carbon\Carbon::parse($barang->created_at)->translatedFormat('d F Y') }}</td>
                     @endif
                 </tr>
             @endforeach
